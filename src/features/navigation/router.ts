@@ -1,5 +1,5 @@
 import { notFoundPage } from "../404";
-import { displayPopularMovies, getPopularMovies } from "../popularMovies";
+import { displayPopularMedia, getPopularMedia } from "../popularMedia";
 
 export function navigateTo(url: string) {
   history.pushState(null, "", url);
@@ -21,11 +21,11 @@ export function initializePageLogic() {
   const currentPage = window.location.pathname;
 
   if (currentPage === "/") {
-    getPopularMovies().then(displayPopularMovies);
+    getPopularMedia("movie").then((items) => displayPopularMedia("movie", items));
   } else if (currentPage === "/movies") {
-    getPopularMovies().then(displayPopularMovies);
+    getPopularMedia("movie").then((items) => displayPopularMedia("movie", items));
   } else if (currentPage === "/tv-shows") {
-    getPopularMovies().then(displayPopularMovies);
+    getPopularMedia("tv").then((items) => displayPopularMedia("tv", items));
   } else {
     notFoundPage();
   }
