@@ -1,9 +1,13 @@
 import "./styles/index.css";
 import { displayPopularMovies, getPopularMovies } from "./features/popularMovies";
 import { displayMovieData, searchMovie } from "./features/searchMovie";
-import "./styles/index.css";
+import { setupNavigation, initializePageLogic } from "./features/navigation/router";
 
-getPopularMovies().then(displayPopularMovies);
-const event = new Event('submit');
-searchMovie(event).then(displayMovieData);
+setupNavigation();
+
+initializePageLogic();
+
+// getPopularMovies().then(displayPopularMovies);
+// const event = new Event('submit');
+// searchMovie(event).then(displayMovieData);
 
