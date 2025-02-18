@@ -3,14 +3,14 @@ import { getGenreName } from "./genreName";
 
 const apiToken = import.meta.env.VITE_TMDB_ACCESS_TOKEN;
 const formEl = document.querySelector("form");
-const movieEl = document.getElementById("movie-data");
+const appEl = document.getElementById("app");
 
 formEl?.addEventListener("submit", searchMovie);
 
 export async function searchMovie(event: Event) {
   event.preventDefault();
-  if (movieEl) {
-    movieEl.innerHTML = "";
+  if (appEl) {
+    appEl.innerHTML = "";
   }
   const movie = getMovie(event);
   const sanitizedMovie = sanitizeMovie(movie);
@@ -71,9 +71,9 @@ async function getMovieData(movie: string) {
 }
 
 export function displayMovieData(movieData: any) {
-  if (!movieEl) return;
-  movieEl.innerHTML = `
-    <h2 class="text-2xl text-white text-center font-bold mb-8 mt-24">Search Results</h2>
+  if (!appEl) return;
+  appEl.innerHTML = `
+    <h2 class="text-2xl text-white text-center font-bold mb-8 mt-12">Search Results</h2>
     <div id="movies-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
       ${movieData.results
         .map(

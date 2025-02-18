@@ -2,7 +2,7 @@ import { displayError } from "./displayError";
 import { getGenreName } from "./genreName";
 
 const apiToken = import.meta.env.VITE_TMDB_ACCESS_TOKEN;
-const movieEl = document.getElementById("movie-data");
+const appEl = document.getElementById("app");
 
 let currentPage = 1;
 
@@ -30,7 +30,7 @@ export async function getPopularMovies(page = 1) {
 }
 
 export function displayPopularMovies(popularMovies: any) {
-  if (!movieEl) return;
+  if (!appEl) return;
 
   const moviesHtml = popularMovies
     .map(
@@ -53,9 +53,9 @@ export function displayPopularMovies(popularMovies: any) {
     .join("");
 
   if (currentPage === 1) {
-    movieEl.innerHTML = `
-      <h2 class="text-2xl text-white text-center font-bold mb-8 mt-24">Top Trending Movies</h2>
-      <div id="movies-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+    appEl.innerHTML = `
+      <h2 class="text-2xl text-white text-center font-bold mb-8 mt-12">Top Trending Movies</h2>
+      <div id="movies-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
       ${moviesHtml}
       </div>
       <div class="flex justify-center mt-4">
