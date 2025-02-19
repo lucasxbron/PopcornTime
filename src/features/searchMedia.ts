@@ -22,9 +22,29 @@ export async function searchMedia(event: Event) {
     return;
   }
 
-  const newUrl = `${window.location.pathname}?search=${encodeURIComponent(sanitizedUserInput)}`;
+  const newUrl = `/?search=${encodeURIComponent(sanitizedUserInput)}`;
   history.pushState(null, "", newUrl);
 
+  await performSearch(sanitizedUserInput);
+}
+
+export async function searchMediaByQuery(query: string) {
+  if (appEl) {
+    appEl.innerHTML = "";
+  }
+  const sanitizedUserInput = sanitizeUserInput(query);
+  const isValidUserInput = isUserInputValid(sanitizedUserInput);
+  console.log("sanitizedUserInput:", sanitizedUserInput);
+
+  if (!isValidUserInput) {
+    console.log("isValidUserInput:", isValidUserInput);
+    return;
+  }
+
+  await performSearch(sanitizedUserInput);
+}
+
+async function performSearch(sanitizedUserInput: string) {
   const [movieData, tvData] = await Promise.all([
     getMediaData("movie", sanitizedUserInput),
     getMediaData("tv", sanitizedUserInput),
