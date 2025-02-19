@@ -14,11 +14,8 @@ export async function searchMedia(event: Event) {
   }
   const media = getMedia(event);
   const sanitizedUserInput = sanitizeUserInput(media);
-  const isValidUserInput = isUserInputValid(sanitizedUserInput);
-  console.log("sanitizedUserInput:", sanitizedUserInput);
 
-  if (!isValidUserInput) {
-    console.log("isValidUserInput:", isValidUserInput);
+  if (!validateUserInput(sanitizedUserInput)) {
     return;
   }
 
@@ -33,11 +30,8 @@ export async function searchMediaByQuery(query: string) {
     appEl.innerHTML = "";
   }
   const sanitizedUserInput = sanitizeUserInput(query);
-  const isValidUserInput = isUserInputValid(sanitizedUserInput);
-  console.log("sanitizedUserInput:", sanitizedUserInput);
 
-  if (!isValidUserInput) {
-    console.log("isValidUserInput:", isValidUserInput);
+  if (!validateUserInput(sanitizedUserInput)) {
     return;
   }
 
@@ -54,7 +48,11 @@ async function performSearch(sanitizedUserInput: string) {
     results: [...(movieData?.results || []), ...(tvData?.results || [])],
   };
 
-  displayMediaData(combinedData);
+  if (combinedData.results.length === 0) {
+    displayError("No results found. Please try a different search term.");
+  } else {
+    displayMediaData(combinedData);
+  }
 }
 
 function getMedia(event: Event): string {
@@ -70,11 +68,18 @@ function sanitizeUserInput(UserInputValue: string): string {
 }
 
 function isUserInputValid(userInputValueSanitized: string): boolean {
-  const isUserInputValid =
-    userInputValueSanitized.length >= 1 && userInputValueSanitized.length <= 100
-      ? true
-      : false;
-  return isUserInputValid;
+  return userInputValueSanitized.length >= 1 && userInputValueSanitized.length <= 100;
+}
+
+function validateUserInput(userInputValueSanitized: string): boolean {
+  const isValidUserInput = isUserInputValid(userInputValueSanitized);
+  console.log("isValidUserInput:", isValidUserInput);
+
+  if (!isValidUserInput) {
+    displayError("Invalid input. Please enter a valid search term.");
+  }
+
+  return isValidUserInput;
 }
 
 async function getMediaData(mediaType: "movie" | "tv", query: string) {
@@ -90,9 +95,8 @@ async function getMediaData(mediaType: "movie" | "tv", query: string) {
 
   try {
     const response = await fetch(url, options);
-    if (!response.ok) throw new Error(`Failed to fetch ${mediaType} results. Please try again.`);
+    if (!response.ok) throw new Error(`Failed to fetch results. Please try again.`);
     const data = await response.json();
-    if (data.results.length === 0) throw new Error(`${mediaType.charAt(0).toUpperCase() + mediaType.slice(1)} not found. Please try again.`);
     console.log(data);
     return data;
   } catch (error: any) {
