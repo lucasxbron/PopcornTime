@@ -22,6 +22,9 @@ export async function searchMedia(event: Event) {
     return;
   }
 
+  const newUrl = `${window.location.pathname}?search=${encodeURIComponent(sanitizedUserInput)}`;
+  history.pushState(null, "", newUrl);
+
   const [movieData, tvData] = await Promise.all([
     getMediaData("movie", sanitizedUserInput),
     getMediaData("tv", sanitizedUserInput),
