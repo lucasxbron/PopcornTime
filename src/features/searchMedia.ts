@@ -7,6 +7,8 @@ const apiToken = import.meta.env.VITE_TMDB_ACCESS_TOKEN;
 const formEl = document.querySelector("form");
 const appEl = document.getElementById("app");
 
+export let movieGenres: string[] = [];
+export let tvGenres: string[] = [];
 export let allGenres: string[] = [];
 
 formEl?.addEventListener("submit", (event) => searchMedia(event));
@@ -39,15 +41,29 @@ async function performSearch(sanitizedUserInput: string) {
   ]);
 
   const combinedData = {
-    results: [...(movieData?.results || []), ...(tvData?.results || [])],
+    results: [
+      ...(movieData?.results || []).map((item: any) => ({ ...item, media_type: "movie" })),
+      ...(tvData?.results || []).map((item: any) => ({ ...item, media_type: "tv" }))
+    ],
   };
 
   if (combinedData.results.length === 0) {
     displayError("No results found. Please try a different search term.");
   } else {
-    allGenres = Array.from(new Set(combinedData.results.flatMap((item: any) => item.genre_ids ? item.genre_ids.map((id: number) => getGenreName(id).trim()) : []))).filter(Boolean);
-    updateGenreFilter(allGenres);
-    displayMediaData(combinedData);
+    movieGenres = Array.from(new Set(
+      combinedData.results
+        .filter(item => item.media_type === "movie")
+        .flatMap(item => item.genre_ids ? item.genre_ids.map((id: number) => getGenreName(id).trim()) : [])
+    )).filter(Boolean);
+
+    tvGenres = Array.from(new Set(
+      combinedData.results
+        .filter(item => item.media_type === "tv")
+        .flatMap(item => item.genre_ids ? item.genre_ids.map((id: number) => getGenreName(id).trim()) : [])
+    )).filter(Boolean);
+
+    allGenres = Array.from(new Set([...movieGenres, ...tvGenres]));
+    displayMediaData(combinedData); // Remove updateGenreFilter call here
   }
 }
 

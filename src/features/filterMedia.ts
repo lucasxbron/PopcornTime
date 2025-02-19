@@ -1,4 +1,4 @@
-import { allGenres } from "./searchMedia";
+import { allGenres, movieGenres, tvGenres } from "./searchMedia";
 
 export function filterMedia() {
   const genreFilter = (document.getElementById("genre-filter") as HTMLSelectElement).value.toLowerCase();
@@ -22,21 +22,27 @@ export function filterMedia() {
     }
   });
 
-  updateGenreFilter(allGenres);
-}
+  // Use the appropriate genre list based on the media type filter
+  let genresToShow = allGenres;
+  if (mediaTypeFilter === "movie") {
+    genresToShow = movieGenres;
+  } else if (mediaTypeFilter === "tv") {
+    genresToShow = tvGenres;
+  }
 
+  updateGenreFilter(genresToShow);
+}
 export function updateGenreFilter(genres: string[]) {
-  const genreFilter = document.getElementById("genre-filter") as HTMLSelectElement;
-  if (!genreFilter) {
+  const genreFilterElement = document.getElementById("genre-filter") as HTMLSelectElement;
+  if (!genreFilterElement) {
     console.error("Genre filter element not found");
     return;
   }
-  const currentGenre = genreFilter.value;
 
-  genreFilter.innerHTML = `
+  const currentValue = genreFilterElement.value;
+
+  genreFilterElement.innerHTML = `
     <option value="">All Genres</option>
-    ${genres.map((genre) => `<option value="${genre}">${genre}</option>`).join("")}
+    ${genres.map(genre => `<option value="${genre.toLowerCase()}" ${currentValue === genre.toLowerCase() ? 'selected' : ''}>${genre}</option>`).join("")}
   `;
-
-  genreFilter.value = currentGenre;
 }
