@@ -54,7 +54,7 @@ export function displayPopularMedia(type: "movie" | "tv", popularItems: any) {
 
   if (currentPage === 1) {
     appEl.innerHTML = `
-      <h2 class="text-2xl text-white text-center font-bold mb-8 mt-12">Top Trending ${type === "movie" ? "Movies" : "TV Shows"}</h2>
+      <h2 class="text-2xl text-white text-center font-bold mb-8 mt-8">Top Trending ${type === "movie" ? "Movies" : "TV Shows"}</h2>
       <div id="items-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
       ${itemsHtml}
       </div>

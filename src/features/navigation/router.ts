@@ -3,6 +3,7 @@ import { displayPopularMedia, getPopularMedia } from "../popularMedia";
 
 export function navigateTo(url: string) {
   history.pushState(null, "", url);
+  clearSearchInput();
   renderPageContent(url);
 }
 
@@ -46,4 +47,11 @@ export function initializeNavigation() {
   window.addEventListener("popstate", () => {
     renderPageContent(window.location.pathname);
   });
+}
+
+function clearSearchInput() {
+  const searchInput = document.getElementById("search-input") as HTMLInputElement;
+  if (searchInput) {
+    searchInput.value = "";
+  }
 }
