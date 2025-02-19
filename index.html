@@ -38,9 +38,12 @@
   </nav>
   <main>
     <section class="flex justify-center mt-24">
-      <form class="flex items-center ">
+      <form class="flex items-center relative">
         <input id="search-input" name="media" type="text" placeholder="Enter any Movie or TV Show"
-        class="flex-grow text-white px-6 py-2 rounded-l-md border border-blue-500 focus:outline-none focus:bg-gray-700 h-10 ">
+        class="pr-10 flex-grow text-white px-6 py-2 rounded-l-md border border-blue-500 focus:outline-none focus:bg-gray-700 h-10 ">
+        <button type="button" id="clear-search" class="absolute mt-[3px] right-20 text-gray-300 p-3 focus:outline-none cursor-pointer">
+          <i class="fas fa-times"></i>
+        </button>
         <input id="search-btn" type="submit" value="Search"
         class="bg-blue-500 text-white px-4 py-2 rounded-r-md hover:bg-blue-600 focus:outline-none h-10 cursor-pointer">
       </form>

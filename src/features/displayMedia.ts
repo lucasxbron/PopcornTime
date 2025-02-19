@@ -20,7 +20,7 @@ export function displayMediaData(mediaData: any) {
         <option value="">All Genres</option>
         ${genres.map((genre) => `<option value="${genre}">${genre}</option>`).join("")}
       </select>
-      <button id="reset-filters" class="ml-4 p-2 bg-blue-500 text-white rounded focus:outline-none">Reset Filters</button>
+      <button id="reset-filters" class="ml-4 p-2 bg-blue-500 text-white rounded focus:outline-none cursor-pointer">Reset Filters</button>
     </div>
     <div id="media-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
       ${mediaData.results
