@@ -3,21 +3,21 @@ import { displayPopularMedia, getPopularMedia } from "../popularMedia";
 
 export function navigateTo(url: string) {
   history.pushState(null, "", url);
-  loadContent(url);
+  renderPageContent(url);
 }
 
-function loadContent(url: string) {
+function renderPageContent(url: string) {
   console.log(`Loading content for: ${url}`);
   const appElement = document.getElementById("app");
   if (appElement) {
     appElement.innerHTML = "";
-    initializePageLogic();
+    loadPageContent();
   } else {
     console.error("App element not found");
   }
 }
 
-export function initializePageLogic() {
+export function loadPageContent() {
   const currentPage = window.location.pathname;
 
   if (currentPage === "/") {
@@ -31,7 +31,7 @@ export function initializePageLogic() {
   }
 }
 
-export function setupNavigation() {
+export function initializeNavigation() {
   document.querySelectorAll("nav a").forEach((link) => {
     link.addEventListener("click", (event) => {
       event.preventDefault();
@@ -44,6 +44,6 @@ export function setupNavigation() {
 
   // Handle browser back/forward buttons
   window.addEventListener("popstate", () => {
-    loadContent(window.location.pathname);
+    renderPageContent(window.location.pathname);
   });
 }
