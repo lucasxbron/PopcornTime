@@ -1,19 +1,26 @@
 import { displayError } from "./displayError";
 import { displayMediaData } from "./displayMedia";
+import { updateGenreFilter } from "./filterMedia";
+import { getGenreName } from "./genreName";
 
 const apiToken = import.meta.env.VITE_TMDB_ACCESS_TOKEN;
 const formEl = document.querySelector("form");
 const appEl = document.getElementById("app");
 
-formEl?.addEventListener("submit", searchMedia);
+export let allGenres: string[] = [];
 
-export async function searchMedia(event: Event) {
-  event.preventDefault();
+formEl?.addEventListener("submit", (event) => searchMedia(event));
+
+export async function searchMedia(event: Event | string) {
+  if (typeof event !== "string") {
+    event.preventDefault();
+  }
+
   if (appEl) {
     appEl.innerHTML = "";
   }
-  const media = getMedia(event);
-  const sanitizedUserInput = sanitizeUserInput(media);
+
+  const sanitizedUserInput = typeof event === "string" ? sanitizeUserInput(event) : sanitizeUserInput(getMedia(event));
 
   if (!validateUserInput(sanitizedUserInput)) {
     return;
@@ -21,19 +28,6 @@ export async function searchMedia(event: Event) {
 
   const newUrl = `/?search=${encodeURIComponent(sanitizedUserInput)}`;
   history.pushState(null, "", newUrl);
-
-  await performSearch(sanitizedUserInput);
-}
-
-export async function searchMediaByQuery(query: string) {
-  if (appEl) {
-    appEl.innerHTML = "";
-  }
-  const sanitizedUserInput = sanitizeUserInput(query);
-
-  if (!validateUserInput(sanitizedUserInput)) {
-    return;
-  }
 
   await performSearch(sanitizedUserInput);
 }
@@ -51,6 +45,8 @@ async function performSearch(sanitizedUserInput: string) {
   if (combinedData.results.length === 0) {
     displayError("No results found. Please try a different search term.");
   } else {
+    allGenres = Array.from(new Set(combinedData.results.flatMap((item: any) => item.genre_ids ? item.genre_ids.map((id: number) => getGenreName(id).trim()) : []))).filter(Boolean);
+    updateGenreFilter(allGenres);
     displayMediaData(combinedData);
   }
 }
@@ -58,13 +54,11 @@ async function performSearch(sanitizedUserInput: string) {
 function getMedia(event: Event): string {
   const formData = new FormData(event.target as HTMLFormElement);
   const formInputs = Object.fromEntries(formData.entries());
-  const UserInputValue = formInputs.media as string;
-  return UserInputValue;
+  return formInputs.media as string;
 }
 
 function sanitizeUserInput(UserInputValue: string): string {
-  const userInputValueSanitized = UserInputValue.trim().toLowerCase();
-  return userInputValueSanitized;
+  return UserInputValue.trim().toLowerCase();
 }
 
 function isUserInputValid(userInputValueSanitized: string): boolean {
