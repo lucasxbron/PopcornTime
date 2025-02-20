@@ -26,7 +26,7 @@ export function getGenreName(id: number): string {
     10765: "Sci-Fi & Fantasy",
     10766: "Soap",
     10767: "Talk",
-    10768: "War & Politics"
+    10768: "War & Politics",
   };
   return genres[id] || "Unknown";
-  }
+}

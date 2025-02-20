@@ -1,6 +1,5 @@
 import { displayError } from "./displayError";
 import { displayMediaData } from "./displayMedia";
-import { updateGenreFilter } from "./filterMedia";
 import { getGenreName } from "./genreName";
 
 const apiToken = import.meta.env.VITE_TMDB_ACCESS_TOKEN;
@@ -22,7 +21,10 @@ export async function searchMedia(event: Event | string) {
     appEl.innerHTML = "";
   }
 
-  const sanitizedUserInput = typeof event === "string" ? sanitizeUserInput(event) : sanitizeUserInput(getMedia(event));
+  const sanitizedUserInput =
+    typeof event === "string"
+      ? sanitizeUserInput(event)
+      : sanitizeUserInput(getMedia(event));
 
   if (!validateUserInput(sanitizedUserInput)) {
     return;
@@ -42,25 +44,43 @@ async function performSearch(sanitizedUserInput: string) {
 
   const combinedData = {
     results: [
-      ...(movieData?.results || []).map((item: any) => ({ ...item, media_type: "movie" })),
-      ...(tvData?.results || []).map((item: any) => ({ ...item, media_type: "tv" }))
+      ...(movieData?.results || []).map((item: any) => ({
+        ...item,
+        media_type: "movie",
+      })),
+      ...(tvData?.results || []).map((item: any) => ({
+        ...item,
+        media_type: "tv",
+      })),
     ],
   };
 
   if (combinedData.results.length === 0) {
     displayError("No results found. Please try a different search term.");
   } else {
-    movieGenres = Array.from(new Set(
-      combinedData.results
-        .filter(item => item.media_type === "movie")
-        .flatMap(item => item.genre_ids ? item.genre_ids.map((id: number) => getGenreName(id).trim()) : [])
-    )).filter(Boolean);
+    movieGenres = Array.from(
+      new Set(
+        combinedData.results
+          .filter((item) => item.media_type === "movie")
+          .flatMap((item) =>
+            item.genre_ids
+              ? item.genre_ids.map((id: number) => getGenreName(id).trim())
+              : []
+          )
+      )
+    ).filter(Boolean);
 
-    tvGenres = Array.from(new Set(
-      combinedData.results
-        .filter(item => item.media_type === "tv")
-        .flatMap(item => item.genre_ids ? item.genre_ids.map((id: number) => getGenreName(id).trim()) : [])
-    )).filter(Boolean);
+    tvGenres = Array.from(
+      new Set(
+        combinedData.results
+          .filter((item) => item.media_type === "tv")
+          .flatMap((item) =>
+            item.genre_ids
+              ? item.genre_ids.map((id: number) => getGenreName(id).trim())
+              : []
+          )
+      )
+    ).filter(Boolean);
 
     allGenres = Array.from(new Set([...movieGenres, ...tvGenres]));
     displayMediaData(combinedData); // Remove updateGenreFilter call here
@@ -78,7 +98,9 @@ function sanitizeUserInput(UserInputValue: string): string {
 }
 
 function isUserInputValid(userInputValueSanitized: string): boolean {
-  return userInputValueSanitized.length >= 1 && userInputValueSanitized.length <= 100;
+  return (
+    userInputValueSanitized.length >= 1 && userInputValueSanitized.length <= 100
+  );
 }
 
 function validateUserInput(userInputValueSanitized: string): boolean {
@@ -105,7 +127,8 @@ async function getMediaData(mediaType: "movie" | "tv", query: string) {
 
   try {
     const response = await fetch(url, options);
-    if (!response.ok) throw new Error(`Failed to fetch results. Please try again.`);
+    if (!response.ok)
+      throw new Error(`Failed to fetch results. Please try again.`);
     const data = await response.json();
     console.log(data);
     return data;

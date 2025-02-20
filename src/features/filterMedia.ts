@@ -1,18 +1,30 @@
 import { allGenres, movieGenres, tvGenres } from "./searchMedia";
 
 export function filterMedia() {
-  const genreFilter = (document.getElementById("genre-filter") as HTMLSelectElement).value.toLowerCase();
-  const mediaTypeFilter = (document.getElementById("media-type-filter") as HTMLSelectElement).value.toLowerCase();
+  const genreFilter = (
+    document.getElementById("genre-filter") as HTMLSelectElement
+  ).value.toLowerCase();
+  const mediaTypeFilter = (
+    document.getElementById("media-type-filter") as HTMLSelectElement
+  ).value.toLowerCase();
   const mediaItems = document.querySelectorAll("#media-container .card");
 
   const availableGenres = new Set<string>();
 
   mediaItems.forEach((item) => {
-    const itemGenres = (item.getAttribute("data-genre") || "").split(", ").map((genre) => genre.trim()).filter(Boolean);
-    const itemMediaType = (item.getAttribute("data-media-type") || "").toLowerCase();
+    const itemGenres = (item.getAttribute("data-genre") || "")
+      .split(", ")
+      .map((genre) => genre.trim())
+      .filter(Boolean);
+    const itemMediaType = (
+      item.getAttribute("data-media-type") || ""
+    ).toLowerCase();
 
-    const matchesGenre = !genreFilter || itemGenres.map((genre) => genre.toLowerCase()).includes(genreFilter);
-    const matchesMediaType = !mediaTypeFilter || itemMediaType === mediaTypeFilter;
+    const matchesGenre =
+      !genreFilter ||
+      itemGenres.map((genre) => genre.toLowerCase()).includes(genreFilter);
+    const matchesMediaType =
+      !mediaTypeFilter || itemMediaType === mediaTypeFilter;
 
     if (matchesGenre && matchesMediaType) {
       (item as HTMLElement).style.display = "";
@@ -22,7 +34,6 @@ export function filterMedia() {
     }
   });
 
-  // Use the appropriate genre list based on the media type filter
   let genresToShow = allGenres;
   if (mediaTypeFilter === "movie") {
     genresToShow = movieGenres;
@@ -33,7 +44,9 @@ export function filterMedia() {
   updateGenreFilter(genresToShow);
 }
 export function updateGenreFilter(genres: string[]) {
-  const genreFilterElement = document.getElementById("genre-filter") as HTMLSelectElement;
+  const genreFilterElement = document.getElementById(
+    "genre-filter"
+  ) as HTMLSelectElement;
   if (!genreFilterElement) {
     console.error("Genre filter element not found");
     return;
@@ -43,6 +56,13 @@ export function updateGenreFilter(genres: string[]) {
 
   genreFilterElement.innerHTML = `
     <option value="">All Genres</option>
-    ${genres.map(genre => `<option value="${genre.toLowerCase()}" ${currentValue === genre.toLowerCase() ? 'selected' : ''}>${genre}</option>`).join("")}
+    ${genres
+      .map(
+        (genre) =>
+          `<option value="${genre.toLowerCase()}" ${
+            currentValue === genre.toLowerCase() ? "selected" : ""
+          }>${genre}</option>`
+      )
+      .join("")}
   `;
 }
