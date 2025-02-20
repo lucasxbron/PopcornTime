@@ -1,4 +1,5 @@
 import { notFoundPage } from "../404";
+import { displayHomepage, getHomepageContent } from "../home";
 import { displayPopularMedia, getPopularMedia } from "../popularMedia";
 
 export function navigateTo(url: string) {
@@ -22,7 +23,7 @@ export function loadPageContent() {
   const currentPage = window.location.pathname;
 
   if (currentPage === "/") {
-    getPopularMedia("movie").then((items) => displayPopularMedia("movie", items));
+    getHomepageContent().then((content) => displayHomepage(content));
   } else if (currentPage === "/movies") {
     getPopularMedia("movie").then((items) => displayPopularMedia("movie", items));
   } else if (currentPage === "/tv-shows") {

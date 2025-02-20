@@ -8,8 +8,8 @@ export function displayMediaData(mediaData: any) {
   if (!appEl) return;
 
   appEl.innerHTML = `
-    <h2 class="text-2xl text-white text-center font-bold mb-8 mt-8">Search Results</h2>
-    <div class="flex justify-center mb-4">
+    <h2 class="text-2xl text-white text-center font-bold mb-8 mt-8 animate-fade-in">Search Results</h2>
+    <div class="flex justify-center mb-6 animate-fade-in">
     <select id="media-type-filter" class="mr-4 py-2 px-3 bg-gray-700 text-white rounded focus:outline-none">
       <option value="">Movies & TV Shows</option>
       <option value="movie">Movies</option>
@@ -27,7 +27,7 @@ export function displayMediaData(mediaData: any) {
       ${mediaData.results
         .map(
           (item: any) => `
-          <div class="card bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:scale-101 mb-4" data-genre="${
+          <div class="card bg-gray-800 rounded-lg overflow-hidden shadow-lg mb-4 hover:scale-105 transition-transform duration-300 animate-fade-in" data-genre="${
             item.genre_ids
               ? item.genre_ids
                   .map((id: number) => getGenreName(id).trim())
@@ -51,7 +51,7 @@ export function displayMediaData(mediaData: any) {
                       .join(", ")
                   : "N/A"
               }</p>
-              <p class="text-sm">${item.overview}</p>
+              <p class="text-sm line-clamp-3">${item.overview}</p>
             </div>
           </div>
         `

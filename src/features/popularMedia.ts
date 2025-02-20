@@ -38,7 +38,7 @@ export function displayPopularMedia(type: "movie" | "tv", popularItems: any) {
   const itemsHtml = popularItems
     .map(
       (item: any) => `
-      <div class="card bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:scale-101">
+      <div class="card bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300 animate-fade-in">
         <img src="https://image.tmdb.org/t/p/w500${item.poster_path}" alt="${
         item.title || item.name
       }" class="w-full h-auto object-cover">
@@ -50,7 +50,7 @@ export function displayPopularMedia(type: "movie" | "tv", popularItems: any) {
           <p class="text-sm mb-2">Genres: ${item.genre_ids
             .map((id: number) => getGenreName(id))
             .join(", ")}</p>
-          <p class="text-sm">${item.overview}</p>
+          <p class="text-sm line-clamp-3">${item.overview}</p>
         </div>
       </div>
     `
@@ -59,7 +59,7 @@ export function displayPopularMedia(type: "movie" | "tv", popularItems: any) {
 
   if (currentPage === 1) {
     appEl.innerHTML = `
-      <h2 class="text-2xl text-white text-center font-bold mb-8 mt-8">Top Trending ${
+      <h2 class="text-2xl text-white text-center font-bold mb-8 mt-8 animate-fade-in">Top Trending ${
         type === "movie" ? "Movies" : "TV Shows"
       }</h2>
       <div id="items-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">

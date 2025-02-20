@@ -1,5 +1,5 @@
 import { displayError } from "./displayError";
-import { displayMediaData } from "./displayMedia";
+import { displayMediaData } from "./displaySearchedMedia";
 import { getGenreName } from "./genreName";
 
 const apiToken = import.meta.env.VITE_TMDB_ACCESS_TOKEN;
