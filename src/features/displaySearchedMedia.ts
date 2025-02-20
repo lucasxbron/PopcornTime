@@ -8,7 +8,11 @@ export function displayMediaData(mediaData: any) {
   if (!appEl) return;
 
   appEl.innerHTML = `
-    <h2 class="text-2xl text-white text-center font-bold mb-8 mt-8 animate-fade-in">Search Results</h2>
+    <div class="flex items-center justify-center mt-4 mb-8 animate-fade-in">
+      <hr class="flex-grow border-gray-500">
+      <h2 class="text-2xl text-white text-center font-bold mx-4 ">Search Results</h2>
+      <hr class="flex-grow border-gray-500">
+    </div>
     <div class="flex justify-center mb-6 animate-fade-in">
     <select id="media-type-filter" class="mr-4 py-2 px-3 bg-gray-700 text-white rounded focus:outline-none">
       <option value="">Movies & TV Shows</option>

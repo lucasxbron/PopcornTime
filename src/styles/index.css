@@ -13,3 +13,7 @@
     }
   }
 }
+
+@theme {
+  --color-accent: #0aa5b5;
+}

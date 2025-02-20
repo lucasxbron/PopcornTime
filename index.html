@@ -12,47 +12,44 @@
 </head>
 
 <body class="bg-gray-700">
-  <nav class="bg-gray-800 fixed w-full top-0 shadow-md z-10">
-    <div class="mx-4 px-4 py-1">
-      <div class="flex items-center justify-between gap-6 h-16">
-        <nav class="">
-          <ul class="flex items-center gap-8 list-none">
-            <li>
-              <a href="/" class="flex items-center gap-4 list-none mr-4">
-                <img src="/public/images/popcorntime-logo.png" alt="" class="w-10 h-10">
-                <h1 class="text-white text-2xl font-bold hidden sm:inline">PopcornTime</h1>
-              </a>
-            </li>
-            <li>
-              <a href="/movies" class="mt-[2px] text-white font-bold hover:text-gray-400 flex items-center gap-2">
-                <i class="fas fa-film"></i> <span class="">Movies</span>
-              </a>
-            </li>
-            <li>
-              <a href="/tv-shows" class="mt-[2px] text-white font-bold hover:text-gray-400 flex items-center gap-2">
-                <i class="fas fa-tv"></i> <span class="">TV Shows</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </div>
-    </div>
-  </nav>
-  <main>
-    <section class="flex justify-center mt-24">
-      <form class="flex items-center relative">
-        <input id="search-input" name="media" type="text" placeholder="Enter any Movie or TV Show"
-          class="pr-10 flex-grow text-white px-6 py-2 rounded-l-md border border-blue-500 focus:outline-none focus:bg-gray-700 h-10 ">
+  <header class="bg-gray-800 fixed w-full top-0 shadow-md z-10">
+    <nav class="mx-4 px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
+      <ul class="flex items-center gap-8 list-none w-full sm:w-auto justify-start">
+        <li>
+          <a href="/" class="flex items-center gap-2 sm:gap-4 list-none">
+            <img src="/public/images/popcorntime-logo.png" alt="PopcornTime Logo" class="w-10 h-10">
+            <h1 class="text-white text-xl font-bold hidden lg:inline">PopcornTime</h1>
+          </a>
+        </li>
+        <div class="flex items-center gap-6 sm:gap-8 md:gap-6 mt-[2px]">
+          <li>
+            <a href="/movies" class="text-white font-bold hover:text-gray-400 flex items-center gap-2">
+              <i class="fas fa-film sm:scale-[140%] md:scale-100"></i> <span class="sm:hidden md:inline">Movies</span>
+            </a>
+          </li>
+          <li>
+            <a href="/tv-shows" class="text-white font-bold hover:text-gray-400 flex items-center gap-2">
+              <i class="fas fa-tv sm:scale-[120%] md:scale-100"></i> <span class=" sm:hidden md:inline">TV Shows</span>
+            </a>
+          </li>
+        </div>
+      </ul>
+      <form class="flex items-center relative w-full sm:w-auto">
+        <input id="search-input" name="media" type="text" placeholder="Enter Movie or TV Show"
+          class="w-full sm:w-64 md:w-80 pr-10 text-white px-6 py-2 rounded-l-md border border-blue-500 focus:outline-none focus:bg-gray-700 h-10">
         <button type="button" id="clear-search"
-          class="absolute mt-[3px] right-20 text-gray-300 p-3 focus:outline-none cursor-pointer">
+          class="absolute right-20 text-gray-300 p-3 focus:outline-none cursor-pointer mt-[2px]">
           <i class="fas fa-times"></i>
         </button>
         <input id="search-btn" type="submit" value="Search"
           class="bg-blue-500 text-white px-4 py-2 rounded-r-md hover:bg-blue-600 focus:outline-none h-10 cursor-pointer">
       </form>
-    </section>
+    </nav>
+  </header>
+
+  <main>
     <section>
-      <div id="app" class="m-6 px-4 py-6"></div>
+      <div id="app" class="m-6 mt-34 px-4 py-6 sm:mt-20"></div>
     </section>
     <footer class="bg-gray-800 text-white py-4 mt-8 shadow-md">
       <div class="mx-6 px-4">
