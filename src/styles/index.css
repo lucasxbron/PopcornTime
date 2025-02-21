@@ -1,6 +1,11 @@
 @import "tailwindcss";
 
 @theme {
+  --font-inter: "Inter", sans-serif;
+  --font-bebas-neue: "Bebas Neue", sans-serif;
+}
+
+@theme {
   --animate-fade-in: fade-in 0.5s ease-out;
   @keyframes fade-in {
     0% {
@@ -21,4 +26,22 @@
 
 @theme {
   --breakpoint-3xl: 120rem;
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-optical-sizing: auto;
+  font-weight: 400 500 600 700;
+  src: url("/src/assets/fonts/Inter-VariableFont_opsz,wght.ttf")
+    format("truetype");
+}
+
+
+@font-face {
+  font-family: "Bebas Neue";
+  font-style: normal;
+  font-weight: 400;
+  src: url("/src/assets/fonts/BebasNeue-Regular.ttf")
+    format("truetype");
 }
