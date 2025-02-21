@@ -8,24 +8,24 @@ export function displayMediaData(mediaData: any) {
   if (!appEl) return;
 
   appEl.innerHTML = `
-    <div class="flex items-center justify-center mt-4 mb-8 animate-fade-in">
+        <div class="flex items-center justify-center mt-4 mb-8 animate-fade-in">
       <hr class="flex-grow border-gray-500">
       <h2 class="text-2xl text-white text-center font-bold mx-4 ">Search Results</h2>
       <hr class="flex-grow border-gray-500">
     </div>
-    <div class="flex justify-center mb-6 animate-fade-in">
-    <select id="media-type-filter" class="mr-4 py-2 px-3 bg-gray-700 text-white rounded focus:outline-none">
-      <option value="">Movies & TV Shows</option>
-      <option value="movie">Movies</option>
-      <option value="tv">TV Shows</option>
-    </select>
-      <select id="genre-filter" class="p-2 bg-gray-700 text-white rounded focus:outline-none">
+    <div class="flex flex-col sm:flex-row justify-center mb-6 animate-fade-in">
+      <select id="media-type-filter" class="mb-2 sm:mb-0 sm:mr-4 py-2 px-3 bg-gray-700 text-white rounded focus:outline-none">
+        <option value="">Movies & TV Shows</option>
+        <option value="movie">Movies</option>
+        <option value="tv">TV Shows</option>
+      </select>
+      <select id="genre-filter" class="mb-2 sm:mb-0 p-2 bg-gray-700 text-white rounded focus:outline-none">
         <option value="">All Genres</option>
         ${allGenres
           .map((genre) => `<option value="${genre}">${genre}</option>`)
           .join("")}
       </select>
-      <button id="reset-filters" class="ml-4 p-2 bg-blue-500 text-white rounded focus:outline-none cursor-pointer">Reset Filters</button>
+      <button id="reset-filters" class="ml-0 sm:ml-4 p-2 bg-blue-500 text-white rounded focus:outline-none cursor-pointer">Reset Filters</button>
     </div>
     <div id="media-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
       ${mediaData.results
