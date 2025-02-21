@@ -186,33 +186,49 @@ function renderMediaCard(item: MediaItem): string {
   `;
 }
 
+
 /**
- * Sets up event listeners for the "Show More" buttons in the trending, upcoming, and top-rated sections.
- * When a "Show More" button is clicked, it fetches additional items from the TMDB API and appends them to the respective section.
- *
- * The sections handled are:
- * - trending
- * - upcoming
- * - top-rated
- *
- * The function performs the following steps:
- * 1. Iterates over the predefined sections.
- * 2. For each section, it retrieves the "Show More" button element.
- * 3. Adds a click event listener to the button.
- * 4. On button click, increments the current page number.
- * 5. Determines the appropriate API endpoint based on the section.
- * 6. Fetches additional items from the TMDB API.
- * 7. Appends the fetched items to the respective section's container.
- *
- * @function
- * @name setupEventListeners
+ * Sets up event listeners for the home page sections.
+ * 
+ * This function performs the following tasks:
+ * - Adds a resize event listener to update the items shown in each section when the window is resized.
+ * - Sets up "show more" buttons for each section to load more items when clicked.
+ * The resize event listener uses a debounce mechanism to avoid excessive function calls.
+ * The "show more" buttons fetch additional items from the TMDB API and update the section's items.
  */
 function setupEventListeners() {
   const sections = ["trending", "upcoming", "top-rated"];
+
+  // Function to update items shown in a section
+  const updateSectionItems = (section: string) => {
+    const itemCount = getInitialItemCount();
+    const itemsContainer = document.getElementById(
+      `${section}-items-container`
+    );
+
+    if (itemsContainer && sectionData[section].allItems.length > 0) {
+      // Calculate items to show: initial itemCount + (itemCount * 2) for each page after first
+      const itemsToShow =
+        itemCount * (sectionData[section].currentPage * 2 - 1);
+      itemsContainer.innerHTML = sectionData[section].allItems
+        .slice(0, itemsToShow)
+        .map((item: MediaItem) => renderMediaCard(item))
+        .join("");
+    }
+  };
+
+  // Add resize listener with proper type for browser environment
+  let resizeTimer: ReturnType<typeof setTimeout>;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      sections.forEach((section) => updateSectionItems(section));
+    }, 250);
+  });
+
+  // Set up show more buttons
   sections.forEach((section) => {
     const showMoreButton = document.getElementById(`show-more-${section}`);
-    const itemCount = getInitialItemCount();
-    const itemsPerLoad = itemCount * 2;
 
     showMoreButton?.addEventListener("click", async () => {
       sectionData[section].currentPage++;
@@ -228,22 +244,11 @@ function setupEventListeners() {
 
       const moreItems = await fetchTMDBData(endpoint);
       if (moreItems.results) {
-        // Add new items to collection
         sectionData[section].allItems = [
           ...sectionData[section].allItems,
           ...moreItems.results,
         ];
-
-        const itemsContainer = document.getElementById(
-          `${section}-items-container`
-        );
-        if (itemsContainer) {
-          // Show all items up to the current page
-          itemsContainer.innerHTML = sectionData[section].allItems
-            .slice(0, itemsPerLoad * sectionData[section].currentPage)
-            .map((item: MediaItem) => renderMediaCard(item))
-            .join("");
-        }
+        updateSectionItems(section);
       }
     });
   });
