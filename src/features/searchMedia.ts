@@ -1,10 +1,16 @@
 import { displayError } from "./displayError";
 import { displayMediaData } from "./displaySearchedMedia";
 import { getGenreName } from "./genreName";
+import { isCacheValid } from "./utils";
 
 const apiToken = import.meta.env.VITE_TMDB_ACCESS_TOKEN;
 const formEl = document.querySelector("form");
 const appEl = document.getElementById("app");
+
+interface CachedData {
+  data: any;
+  timestamp: number;
+}
 
 export let movieGenres: string[] = [];
 export let tvGenres: string[] = [];
@@ -115,6 +121,21 @@ function validateUserInput(userInputValueSanitized: string): boolean {
 }
 
 async function getMediaData(mediaType: "movie" | "tv", query: string) {
+  const cacheKey = `tmdb_search_${mediaType}_${query}`;
+  
+  // Check for cached data
+  const cachedContent = localStorage.getItem(cacheKey);
+  if (cachedContent) {
+    const cached: CachedData = JSON.parse(cachedContent);
+    if (isCacheValid(cached.timestamp)) {
+      console.log(`Using cached data for ${mediaType} search: ${query}`);
+      return cached.data;
+    } else {
+      // Cache expired, remove it
+      localStorage.removeItem(cacheKey);
+    }
+  }
+
   const options = {
     method: "GET",
     headers: {
@@ -130,6 +151,14 @@ async function getMediaData(mediaType: "movie" | "tv", query: string) {
     if (!response.ok)
       throw new Error(`Failed to fetch results. Please try again.`);
     const data = await response.json();
+    
+    // Cache the new data
+    const cacheData: CachedData = {
+      data,
+      timestamp: Date.now(),
+    };
+    localStorage.setItem(cacheKey, JSON.stringify(cacheData));
+    
     console.log(data);
     return data;
   } catch (error: any) {

@@ -1,4 +1,5 @@
 import { getGenreName } from "./genreName";
+import { getInitialItemCount, isCacheValid } from "./utils";
 
 const apiToken = import.meta.env.VITE_TMDB_ACCESS_TOKEN;
 const appEl = document.getElementById("app");
@@ -17,32 +18,47 @@ interface MediaItem {
 
 interface HomepageContent {
   trendingNow: MediaItem[];
-  popularMovies: MediaItem[];
-  popularTVShows: MediaItem[];
   upcomingReleases: MediaItem[];
   topRated: MediaItem[];
 }
 
+interface CachedData {
+  data: any;
+  timestamp: number;
+}
+
 export async function getHomepageContent(): Promise<HomepageContent> {
-  const [trending, popularMovies, popularTV, upcoming, topRated] =
+  const [trending, upcoming, topRated] =
     await Promise.all([
       fetchTMDBData("/trending/all/day"),
-      fetchTMDBData("/movie/popular"),
-      fetchTMDBData("/tv/popular"),
       fetchTMDBData("/movie/upcoming"),
       fetchTMDBData("/movie/top_rated"),
     ]);
 
   return {
     trendingNow: trending.results,
-    popularMovies: popularMovies.results,
-    popularTVShows: popularTV.results,
     upcomingReleases: upcoming.results,
     topRated: topRated.results,
   };
 }
 
 async function fetchTMDBData(endpoint: string) {
+  const cacheKey = `tmdb_${endpoint}`;
+  
+  // Check if we have cached data
+  const cachedContent = localStorage.getItem(cacheKey);
+  if (cachedContent) {
+    const cached: CachedData = JSON.parse(cachedContent);
+    if (isCacheValid(cached.timestamp)) {
+      console.log(`Using cached data for ${endpoint}`);
+      return cached.data;
+    } else {
+      // Cache expired, remove it
+      localStorage.removeItem(cacheKey);
+    }
+  }
+
+  // If no cache or expired, fetch new data
   const options = {
     method: "GET",
     headers: {
@@ -58,7 +74,17 @@ async function fetchTMDBData(endpoint: string) {
     );
     if (!response.ok)
       throw new Error(`Failed to fetch ${endpoint}. Please try again.`);
-    return await response.json();
+    
+    const data = await response.json();
+    
+    // Cache the new data
+    const cacheData: CachedData = {
+      data,
+      timestamp: Date.now(),
+    };
+    localStorage.setItem(cacheKey, JSON.stringify(cacheData));
+    
+    return data;
   } catch (error) {
     console.error(error);
     return { results: [] };
@@ -86,6 +112,8 @@ function renderSection(
   items: MediaItem[],
   type: string
 ): string {
+  const itemCount = getInitialItemCount();
+  
   return `
     <section class="mt-4 animate-fade-in">
        <div class="flex items-center justify-center mb-8">
@@ -95,7 +123,7 @@ function renderSection(
         </div>
       <div id="${type}-items-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6 gap-5">
         ${items
-          .slice(0, 6)
+          .slice(0, itemCount)
           .map((item) => renderMediaCard(item))
           .join("")}
       </div>
@@ -131,24 +159,27 @@ function setupEventListeners() {
   sections.forEach((section) => {
     const showMoreButton = document.getElementById(`show-more-${section}`);
     let currentPage = 1;
+    let itemsPerLoad = getInitialItemCount() * 2;
 
     showMoreButton?.addEventListener("click", async () => {
       currentPage++;
-      let moreItems;
+      let endpoint = '';
+      
       if (section === "trending") {
-        moreItems = await fetchTMDBData(
-          `/trending/all/day?page=${currentPage}`
-        );
+        endpoint = `/trending/all/day?page=${currentPage}`;
       } else if (section === "upcoming") {
-        moreItems = await fetchTMDBData(`/movie/upcoming?page=${currentPage}`);
+        endpoint = `/movie/upcoming?page=${currentPage}`;
       } else if (section === "top-rated") {
-        moreItems = await fetchTMDBData(`/movie/top_rated?page=${currentPage}`);
+        endpoint = `/movie/top_rated?page=${currentPage}`;
       }
+
+      const moreItems = await fetchTMDBData(endpoint);
       const itemsContainer = document.getElementById(
         `${section}-items-container`
       );
       if (itemsContainer) {
         itemsContainer.innerHTML += moreItems.results
+          .slice(0, itemsPerLoad)
           .map((item: MediaItem) => renderMediaCard(item))
           .join("");
       }

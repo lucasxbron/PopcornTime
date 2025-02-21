@@ -1,12 +1,33 @@
 import { displayError } from "./displayError";
 import { getGenreName } from "./genreName";
+import { getInitialItemCount, isCacheValid } from "./utils";
 
 const apiToken = import.meta.env.VITE_TMDB_ACCESS_TOKEN;
 const appEl = document.getElementById("app");
 
+interface CachedData {
+  data: any;
+  timestamp: number;
+}
+
 let currentPage = 1;
 
 export async function getPopularMedia(type: "movie" | "tv", page = 1) {
+  const cacheKey = `tmdb_${type}_popular_page${page}`;
+  
+  // Check for cached data
+  const cachedContent = localStorage.getItem(cacheKey);
+  if (cachedContent) {
+    const cached: CachedData = JSON.parse(cachedContent);
+    if (isCacheValid(cached.timestamp)) {
+      console.log(`Using cached data for popular ${type}s page ${page}`);
+      return cached.data;
+    } else {
+      // Cache expired, remove it
+      localStorage.removeItem(cacheKey);
+    }
+  }
+
   const options = {
     method: "GET",
     headers: {
@@ -23,8 +44,17 @@ export async function getPopularMedia(type: "movie" | "tv", page = 1) {
         `Failed to fetch popular ${type}s. Please reload the page.`
       );
     const data = await response.json();
-    console.log(data.results.slice(0, 20));
-    return data.results.slice(0, 20);
+    const results = data.results.slice(0, 20);
+    
+    // Cache the new data
+    const cacheData: CachedData = {
+      data: results,
+      timestamp: Date.now(),
+    };
+    localStorage.setItem(cacheKey, JSON.stringify(cacheData));
+    
+    console.log(results);
+    return results;
   } catch (error: any) {
     console.error(error.message);
     displayError(error.message);
@@ -35,7 +65,10 @@ export async function getPopularMedia(type: "movie" | "tv", page = 1) {
 export function displayPopularMedia(type: "movie" | "tv", popularItems: any) {
   if (!appEl) return;
 
+  const itemCount = getInitialItemCount();
+
   const itemsHtml = popularItems
+    .slice(0, currentPage === 1 ? itemCount * 4 : itemCount * 4)
     .map(
       (item: any) => `
       <div class="card bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:scale-103 transition-transform duration-300">
