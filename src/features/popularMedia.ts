@@ -38,7 +38,7 @@ export function displayPopularMedia(type: "movie" | "tv", popularItems: any) {
   const itemsHtml = popularItems
     .map(
       (item: any) => `
-      <div class="card bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300 animate-fade-in">
+      <div class="card bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:scale-103 transition-transform duration-300">
         <img src="https://image.tmdb.org/t/p/w500${item.poster_path}" alt="${
         item.title || item.name
       }" class="w-full h-auto object-cover">
@@ -67,11 +67,11 @@ export function displayPopularMedia(type: "movie" | "tv", popularItems: any) {
             <hr class="flex-grow border-gray-500">
         </div>
       
-      <div id="items-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div id="items-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6 gap-5 animate-fade-in">
       ${itemsHtml}
       </div>
       <div class="flex justify-center mt-8">
-      <button id="show-more" class="px-4 py-2 bg-blue-500 text-white rounded cursor-pointer">Show More</button>
+      <button id="show-more" class="px-4 py-2 bg-accent hover:bg-accent-hover text-white rounded cursor-pointer">Show More</button>
       </div>
     `;
   } else {

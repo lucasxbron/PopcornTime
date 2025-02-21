@@ -93,14 +93,14 @@ function renderSection(
             <h2 class="text-2xl text-white text-center font-bold mx-4">${title}</h2>
             <hr class="flex-grow border-gray-500">
         </div>
-      <div id="${type}-items-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+      <div id="${type}-items-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6 gap-5">
         ${items
-          .slice(0, 5)
+          .slice(0, 6)
           .map((item) => renderMediaCard(item))
           .join("")}
       </div>
       <div class="flex justify-center mt-8">
-        <button id="show-more-${type}" class="px-4 py-2 bg-blue-500 text-white rounded cursor-pointer">Show More</button>
+        <button id="show-more-${type}" class="px-4 py-2 bg-accent hover:bg-accent-hover text-white rounded cursor-pointer">Show More</button>
       </div>
     </section>
   `;
@@ -108,7 +108,7 @@ function renderSection(
 
 function renderMediaCard(item: MediaItem): string {
   return `
-    <div class="card bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300 animate-fade-in">
+    <div class="card bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:scale-103 transition-transform duration-300">
       <img src="https://image.tmdb.org/t/p/w500${item.poster_path}" alt="${
     item.title || item.name
   }" class="w-full h-auto object-cover">

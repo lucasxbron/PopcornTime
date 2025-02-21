@@ -25,13 +25,13 @@ export function displayMediaData(mediaData: any) {
           .map((genre) => `<option value="${genre}">${genre}</option>`)
           .join("")}
       </select>
-      <button id="reset-filters" class="ml-0 sm:ml-4 p-2 bg-blue-500 text-white rounded focus:outline-none cursor-pointer">Reset Filters</button>
+      <button id="reset-filters" class="ml-0 sm:ml-4 p-2 bg-accent hover:bg-accent-hover text-white rounded focus:outline-none cursor-pointer">Reset Filters</button>
     </div>
-    <div id="media-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+    <div id="media-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6 gap-5 animate-fade-in">
       ${mediaData.results
         .map(
           (item: any) => `
-          <div class="card bg-gray-800 rounded-lg overflow-hidden shadow-lg mb-4 hover:scale-105 transition-transform duration-300 animate-fade-in" data-genre="${
+          <div class="card bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:scale-103 transition-transform duration-300" data-genre="${
             item.genre_ids
               ? item.genre_ids
                   .map((id: number) => getGenreName(id).trim())

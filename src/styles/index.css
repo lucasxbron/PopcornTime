@@ -16,4 +16,9 @@
 
 @theme {
   --color-accent: #0aa5b5;
+  --color-accent-hover: #0a8fa5;
+}
+
+@theme {
+  --breakpoint-3xl: 120rem;
 }
