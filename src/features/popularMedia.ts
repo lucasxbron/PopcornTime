@@ -1,6 +1,6 @@
 import { displayError } from "./displayError";
 import { getGenreName } from "./genreName";
-import { getInitialItemCount, isCacheValid } from "./utils";
+import { isCacheValid } from "./utils";
 
 const apiToken = import.meta.env.VITE_TMDB_ACCESS_TOKEN;
 const appEl = document.getElementById("app");
@@ -12,6 +12,19 @@ interface CachedData {
 
 let currentPage = 1;
 
+/**
+ * Fetches popular media (movies or TV shows) from the TMDB API.
+ * 
+ * This function first checks if the data is available in the local storage cache.
+ * If cached data is found and is still valid, it returns the cached data.
+ * Otherwise, it fetches the data from the TMDB API, caches it, and then returns it.
+ * 
+ * @param type - The type of media to fetch, either "movie" or "tv".
+ * @param page - The page number to fetch, defaults to 1.
+ * @returns A promise that resolves to an array of popular media items.
+ * 
+ * @throws Will throw an error if the fetch operation fails.
+ */
 export async function getPopularMedia(type: "movie" | "tv", page = 1) {
   const cacheKey = `tmdb_${type}_popular_page${page}`;
   
@@ -62,13 +75,22 @@ export async function getPopularMedia(type: "movie" | "tv", page = 1) {
   }
 }
 
+/**
+ * Displays popular media items (movies or TV shows) on the web page.
+ *
+ * @param type - The type of media to display, either "movie" or "tv".
+ * @param popularItems - An array of popular media items to display.
+ *
+ * This function generates HTML content for the provided popular media items and inserts it into the DOM.
+ * If the current page is the first page, it creates a new container with a header and a "Show More" button.
+ * If the current page is not the first page, it appends the new items to the existing container.
+ *
+ * The "Show More" button, when clicked, fetches more popular media items and displays them.
+ */
 export function displayPopularMedia(type: "movie" | "tv", popularItems: any) {
   if (!appEl) return;
 
-  const itemCount = getInitialItemCount();
-
   const itemsHtml = popularItems
-    .slice(0, currentPage === 1 ? itemCount * 4 : itemCount * 4)
     .map(
       (item: any) => `
       <div class="card bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:scale-103 transition-transform duration-300">
@@ -114,10 +136,15 @@ export function displayPopularMedia(type: "movie" | "tv", popularItems: any) {
     }
   }
 
-  const newShowMoreButton = document.getElementById("show-more");
-  newShowMoreButton?.addEventListener("click", async () => {
-    currentPage++;
-    const moreItems = await getPopularMedia(type, currentPage);
-    displayPopularMedia(type, moreItems);
-  });
+  const showMoreButton = document.getElementById("show-more");
+  if (showMoreButton) {
+    const newShowMoreButton = showMoreButton.cloneNode(true);
+    showMoreButton.parentNode?.replaceChild(newShowMoreButton, showMoreButton);
+    
+    newShowMoreButton.addEventListener("click", async () => {
+      currentPage++;
+      const moreItems = await getPopularMedia(type, currentPage);
+      displayPopularMedia(type, moreItems);
+    });
+  }
 }

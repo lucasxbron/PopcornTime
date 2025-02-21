@@ -1,5 +1,21 @@
 import { allGenres, movieGenres, tvGenres } from "./searchMedia";
 
+/**
+ * Filters media items based on selected genre and media type.
+ *
+ * This function retrieves the selected genre and media type from the respective
+ * dropdown elements, then iterates over all media items to determine which items
+ * match the selected filters. Matching items are displayed, while non-matching
+ * items are hidden. Additionally, it updates the available genres based on the
+ * filtered media items and updates the genre filter options accordingly.
+ *
+ * @remarks
+ * - The genre filter and media type filter values are converted to lowercase for
+ *   case-insensitive comparison.
+ * - Media items are expected to have `data-genre` and `data-media-type` attributes
+ *   for filtering purposes.
+ * - The function updates the genre filter options based on the selected media type.
+ */
 export function filterMedia() {
   const genreFilter = (
     document.getElementById("genre-filter") as HTMLSelectElement
@@ -43,6 +59,16 @@ export function filterMedia() {
 
   updateGenreFilter(genresToShow);
 }
+
+/**
+ * Updates the genre filter dropdown with the provided genres.
+ *
+ * This function updates the options of a select element with the id "genre-filter".
+ * It sets the options based on the provided genres array and retains the current
+ * selected value if it exists in the new options.
+ *
+ * @param genres - An array of genre strings to populate the dropdown options.
+ */
 export function updateGenreFilter(genres: string[]) {
   const genreFilterElement = document.getElementById(
     "genre-filter"

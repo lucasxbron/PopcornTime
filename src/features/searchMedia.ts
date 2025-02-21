@@ -18,6 +18,18 @@ export let allGenres: string[] = [];
 
 formEl?.addEventListener("submit", (event) => searchMedia(event));
 
+/**
+ * Searches for media based on the provided event or string input.
+ *
+ * @param event - The event object or a string representing the search query.
+ *
+ * If the event is not a string, it prevents the default action of the event.
+ * Clears the content of the app element if it exists.
+ * Sanitizes the user input and validates it.
+ * If the input is valid, updates the URL with the search query and performs the search.
+ *
+ * @returns A promise that resolves when the search is complete.
+ */
 export async function searchMedia(event: Event | string) {
   if (typeof event !== "string") {
     event.preventDefault();
@@ -42,6 +54,15 @@ export async function searchMedia(event: Event | string) {
   await performSearch(sanitizedUserInput);
 }
 
+/**
+ * Performs a search for media data (movies and TV shows) based on the sanitized user input.
+ * It fetches movie and TV data concurrently, combines the results, and processes the genres.
+ * If no results are found, an error message is displayed.
+ * Otherwise, it extracts and filters unique genres for movies and TV shows, and displays the media data.
+ *
+ * @param {string} sanitizedUserInput - The sanitized input string from the user for searching media.
+ * @returns {Promise<void>} A promise that resolves when the search operation is complete.
+ */
 async function performSearch(sanitizedUserInput: string) {
   const [movieData, tvData] = await Promise.all([
     getMediaData("movie", sanitizedUserInput),
@@ -93,6 +114,12 @@ async function performSearch(sanitizedUserInput: string) {
   }
 }
 
+/**
+ * Extracts the media input value from a form submission event.
+ *
+ * @param event - The form submission event.
+ * @returns The media input value as a string.
+ */
 function getMedia(event: Event): string {
   const formData = new FormData(event.target as HTMLFormElement);
   const formInputs = Object.fromEntries(formData.entries());
@@ -120,9 +147,19 @@ function validateUserInput(userInputValueSanitized: string): boolean {
   return isValidUserInput;
 }
 
+/**
+ * Fetches media data from The Movie Database (TMDB) API based on the specified media type and query.
+ * Utilizes local storage to cache results and avoid redundant API calls.
+ *
+ * @param mediaType - The type of media to search for, either "movie" or "tv".
+ * @param query - The search query string.
+ * @returns A promise that resolves to the fetched media data or null if an error occurs.
+ *
+ * @throws Will throw an error if the fetch request fails.
+ */
 async function getMediaData(mediaType: "movie" | "tv", query: string) {
   const cacheKey = `tmdb_search_${mediaType}_${query}`;
-  
+
   // Check for cached data
   const cachedContent = localStorage.getItem(cacheKey);
   if (cachedContent) {
@@ -151,14 +188,14 @@ async function getMediaData(mediaType: "movie" | "tv", query: string) {
     if (!response.ok)
       throw new Error(`Failed to fetch results. Please try again.`);
     const data = await response.json();
-    
+
     // Cache the new data
     const cacheData: CachedData = {
       data,
       timestamp: Date.now(),
     };
     localStorage.setItem(cacheKey, JSON.stringify(cacheData));
-    
+
     console.log(data);
     return data;
   } catch (error: any) {

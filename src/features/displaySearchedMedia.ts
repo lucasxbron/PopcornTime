@@ -67,6 +67,20 @@ export function displayMediaData(mediaData: any) {
   setupFilterEventListeners();
 }
 
+/**
+ * Sets up event listeners for filter elements on the media display page.
+ *
+ * This function attaches event listeners to the genre filter, media type filter,
+ * and reset filters button. When the genre filter changes, the media is filtered
+ * accordingly. When the media type filter changes, the genre filter is reset and
+ * the media is filtered. When the reset filters button is clicked, both filters
+ * are reset and the media is filtered.
+ *
+ * @remarks
+ * If any of the filter elements are not found in the DOM, an error is logged to the console.
+ *
+ * @returns {void}
+ */
 function setupFilterEventListeners() {
   const genreFilter = document.getElementById(
     "genre-filter"

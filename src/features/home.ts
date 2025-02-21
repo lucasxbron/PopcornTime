@@ -27,13 +27,28 @@ interface CachedData {
   timestamp: number;
 }
 
+interface SectionData {
+  allItems: MediaItem[];
+  currentPage: number;
+}
+
+const sectionData: { [key: string]: SectionData } = {
+  trending: { allItems: [], currentPage: 1 },
+  upcoming: { allItems: [], currentPage: 1 },
+  "top-rated": { allItems: [], currentPage: 1 },
+};
+
+/**
+ * Fetches and returns the homepage content including trending, upcoming, and top-rated movies.
+ *
+ * @returns {Promise<HomepageContent>} A promise that resolves to an object containing arrays of trending, upcoming, and top-rated movies.
+ */
 export async function getHomepageContent(): Promise<HomepageContent> {
-  const [trending, upcoming, topRated] =
-    await Promise.all([
-      fetchTMDBData("/trending/all/day"),
-      fetchTMDBData("/movie/upcoming"),
-      fetchTMDBData("/movie/top_rated"),
-    ]);
+  const [trending, upcoming, topRated] = await Promise.all([
+    fetchTMDBData("/trending/all/day"),
+    fetchTMDBData("/movie/upcoming"),
+    fetchTMDBData("/movie/top_rated"),
+  ]);
 
   return {
     trendingNow: trending.results,
@@ -42,9 +57,21 @@ export async function getHomepageContent(): Promise<HomepageContent> {
   };
 }
 
+/**
+ * Fetches data from The Movie Database (TMDB) API with caching support.
+ *
+ * This function attempts to retrieve data from the local storage cache first.
+ * If the cached data is not available or has expired, it fetches new data from the TMDB API.
+ * The fetched data is then cached in local storage for future use.
+ *
+ * @param {string} endpoint - The TMDB API endpoint to fetch data from.
+ * @returns {Promise<any>} - A promise that resolves to the fetched data.
+ *
+ * @throws {Error} - Throws an error if the fetch operation fails.
+ */
 async function fetchTMDBData(endpoint: string) {
   const cacheKey = `tmdb_${endpoint}`;
-  
+
   // Check if we have cached data
   const cachedContent = localStorage.getItem(cacheKey);
   if (cachedContent) {
@@ -74,16 +101,16 @@ async function fetchTMDBData(endpoint: string) {
     );
     if (!response.ok)
       throw new Error(`Failed to fetch ${endpoint}. Please try again.`);
-    
+
     const data = await response.json();
-    
+
     // Cache the new data
     const cacheData: CachedData = {
       data,
       timestamp: Date.now(),
     };
     localStorage.setItem(cacheKey, JSON.stringify(cacheData));
-    
+
     return data;
   } catch (error) {
     console.error(error);
@@ -113,7 +140,12 @@ function renderSection(
   type: string
 ): string {
   const itemCount = getInitialItemCount();
-  
+
+  // Initialize or update section data
+  if (sectionData[type].currentPage === 1) {
+    sectionData[type].allItems = items;
+  }
+
   return `
     <section class="mt-4 animate-fade-in">
        <div class="flex items-center justify-center mb-8">
@@ -154,34 +186,64 @@ function renderMediaCard(item: MediaItem): string {
   `;
 }
 
+/**
+ * Sets up event listeners for the "Show More" buttons in the trending, upcoming, and top-rated sections.
+ * When a "Show More" button is clicked, it fetches additional items from the TMDB API and appends them to the respective section.
+ *
+ * The sections handled are:
+ * - trending
+ * - upcoming
+ * - top-rated
+ *
+ * The function performs the following steps:
+ * 1. Iterates over the predefined sections.
+ * 2. For each section, it retrieves the "Show More" button element.
+ * 3. Adds a click event listener to the button.
+ * 4. On button click, increments the current page number.
+ * 5. Determines the appropriate API endpoint based on the section.
+ * 6. Fetches additional items from the TMDB API.
+ * 7. Appends the fetched items to the respective section's container.
+ *
+ * @function
+ * @name setupEventListeners
+ */
 function setupEventListeners() {
   const sections = ["trending", "upcoming", "top-rated"];
   sections.forEach((section) => {
     const showMoreButton = document.getElementById(`show-more-${section}`);
-    let currentPage = 1;
-    let itemsPerLoad = getInitialItemCount() * 2;
+    const itemCount = getInitialItemCount();
+    const itemsPerLoad = itemCount * 2;
 
     showMoreButton?.addEventListener("click", async () => {
-      currentPage++;
-      let endpoint = '';
-      
+      sectionData[section].currentPage++;
+      let endpoint = "";
+
       if (section === "trending") {
-        endpoint = `/trending/all/day?page=${currentPage}`;
+        endpoint = `/trending/all/day?page=${sectionData[section].currentPage}`;
       } else if (section === "upcoming") {
-        endpoint = `/movie/upcoming?page=${currentPage}`;
+        endpoint = `/movie/upcoming?page=${sectionData[section].currentPage}`;
       } else if (section === "top-rated") {
-        endpoint = `/movie/top_rated?page=${currentPage}`;
+        endpoint = `/movie/top_rated?page=${sectionData[section].currentPage}`;
       }
 
       const moreItems = await fetchTMDBData(endpoint);
-      const itemsContainer = document.getElementById(
-        `${section}-items-container`
-      );
-      if (itemsContainer) {
-        itemsContainer.innerHTML += moreItems.results
-          .slice(0, itemsPerLoad)
-          .map((item: MediaItem) => renderMediaCard(item))
-          .join("");
+      if (moreItems.results) {
+        // Add new items to collection
+        sectionData[section].allItems = [
+          ...sectionData[section].allItems,
+          ...moreItems.results,
+        ];
+
+        const itemsContainer = document.getElementById(
+          `${section}-items-container`
+        );
+        if (itemsContainer) {
+          // Show all items up to the current page
+          itemsContainer.innerHTML = sectionData[section].allItems
+            .slice(0, itemsPerLoad * sectionData[section].currentPage)
+            .map((item: MediaItem) => renderMediaCard(item))
+            .join("");
+        }
       }
     });
   });
