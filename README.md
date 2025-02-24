@@ -20,10 +20,6 @@ A sleek and modern movie discovery platform built with TypeScript and powered by
 - FontAwesome Icons
 - Google Fonts
 
-## 📸 Preview
-
-[Add screenshots here]
-
 ## 🛠️ Setup
 
 1. Clone the repository:
