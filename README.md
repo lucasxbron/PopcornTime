@@ -18,7 +18,7 @@ A sleek and modern movie discovery platform built with TypeScript and powered by
 - Tailwind CSS
 - TMDB API
 - FontAwesome Icons
-- Google Fonts (Bebas Neue & Inter)
+- Google Fonts
 
 ## 📸 Preview
 
