@@ -63,3 +63,26 @@ export function clearSearchInput() {
     searchInput.value = "";
   }
 }
+
+
+/**
+ * Toggles footer classes based on the current URL.
+ *
+ * This function checks the current URL and adds specific classes to the footer element
+ * when the URL is not "/", "/movies", or "/tv-shows". It removes those classes when
+ * the URL matches any of those paths.
+ */
+export function toggleFooterClasses() {
+  const footer = document.querySelector("footer");
+  if (!footer) return;
+
+  const currentPath = window.location.pathname;
+  const shouldAddClasses = !["/", "/movies", "/tv-shows"].includes(currentPath);
+  const classesToToggle = ["fixed", "bottom-0", "w-full"];
+
+  if (shouldAddClasses) {
+    footer.classList.add(...classesToToggle);
+  } else {
+    footer.classList.remove(...classesToToggle);
+  }
+}

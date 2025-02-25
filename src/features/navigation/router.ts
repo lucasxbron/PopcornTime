@@ -1,7 +1,7 @@
 import { notFoundPage } from "../404";
 import { displayHomepage, getHomepageContent } from "../home";
 import { displayPopularMedia, getPopularMedia } from "../popularMedia";
-import { clearSearchInput } from "../utils";
+import { clearSearchInput, toggleFooterClasses } from "../utils";
 
 /**
  * Navigates to the specified URL by updating the browser's history state,
@@ -47,13 +47,13 @@ export function loadPageContent() {
   const currentPage = window.location.pathname;
 
   if (currentPage === "/") {
-    getHomepageContent().then((content) => displayHomepage(content));
+    getHomepageContent().then((content) => displayHomepage(content)).then(toggleFooterClasses);
   } else if (currentPage === "/movies") {
     getPopularMedia("movie").then((items) =>
       displayPopularMedia("movie", items)
-    );
+    ).then(toggleFooterClasses);
   } else if (currentPage === "/tv-shows") {
-    getPopularMedia("tv").then((items) => displayPopularMedia("tv", items));
+    getPopularMedia("tv").then((items) => displayPopularMedia("tv", items)).then(toggleFooterClasses);
   } else {
     notFoundPage();
   }
